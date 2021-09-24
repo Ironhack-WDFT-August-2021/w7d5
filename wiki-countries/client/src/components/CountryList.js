@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import countries from '../countries.json';
 
 const CountryList = (props) => {
   return (
     <div className="col-5" style={{ maxHeight: '90vh', overflow: 'scroll' }}>
       <div className='list-group'>
-        {countries.map((country, index) => {
+        {props.countries.map((country, index) => {
           return (
             <Link
               key={index}

@@ -1,20 +1,42 @@
-import React from 'react';
-import countries from '../countries.json';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
 
 const CountryDetail = props => {
 
+  const [country, setCountry] = useState(null);
 
-  const getCountryByCode = cca3 => countries.find(el => el.cca3 === cca3);
+  const getCountryData = () => {
+    // get the data for that country form the server
+    const countryCode = props.match.params.id
+    axios.get(`/countries/${countryCode}`)
+      .then(response => {
+        console.log(response.data)
+        setCountry(response.data);
+      })
+      .catch(err => console.log(err))
+  }
 
-  const country = { ...getCountryByCode(props.match.params.id) };
+  useEffect(() => {
+    getCountryData();
+  }, [props])
 
-  console.log(country);
 
-  const borders = country.borders.map(cca3 => countries.find(el => el.cca3 === cca3));
-  console.log(borders)
-  console.log(country);
+
+
+  // const getCountryByCode = cca3 => countries.find(el => el.cca3 === cca3);
+
+  // const country = { ...getCountryByCode(props.match.params.id) };
+
+  // console.log(country);
+
+  // const borders = country.borders.map(cca3 => getCountryByCode(cca3));
+  // console.log(country);
+
+  // if country is null -> render sth else that the structure below
+  if (!country) {
+    return <></>
+  }
   return (
     <div className="col-7">
       <h1>{country.name.common}</h1>
@@ -32,16 +54,16 @@ const CountryDetail = props => {
               <sup>2</sup>
             </td>
           </tr>
-          {borders.length > 0 && (
+          {country.borders.length > 0 && (
             <tr>
               <td>Borders</td>
               <td>
                 <ul>
-                  {borders.map(el => {
+                  {country.borders.map(country => {
                     return (
-                      <li key={el.cca3}>
-                        <Link to={`/${el.cca3}`}>
-                          {el.name.common}
+                      <li key={country.cca3}>
+                        <Link to={`/${country.cca3}`}>
+                          {country.name.common}
                         </Link>
                       </li>
                     );

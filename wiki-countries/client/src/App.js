@@ -1,22 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import countries from './countries.json';
 import CountryList from './components/CountryList';
 import CountryDetail from './components/CountryDetail';
-import { useState } from 'react';
+import axios from 'axios';
 
 const App = () => {
 
-  const [countries, setCountries] = useState([countries]);
+  const [countries, setCountries] = useState([]);
+
+  useEffect(() => {
+    // get the countries from the server
+    axios.get('/countries')
+      .then(response => {
+        // set the state of countries
+        // console.log(response.data);
+        setCountries(response.data);
+      })
+      .catch(err => console.log(err));
+  }, [])
 
   return (
     <div className='App' >
       <Navbar />
       <div className='container'>
         <div className='row'>
-          <CountryList />
+          <CountryList countries={countries} />
           <Route exact path='/:id' component={CountryDetail} />
         </div>
       </div>
